@@ -48,11 +48,13 @@ const TOUCH = {
   timestampFormat: "[[CC]YY]MMDDhhmm[.SS]",
 } as const;
 
+// `-f` is a compatibility no-op in current GNU Coreutils and Apple/FreeBSD
+// touch, despite the historical Fig/man-page wording. See the research note.
 const TOUCH_ZH_CN = {
   "-A": "按指定值调整文件的访问时间和修改时间",
   "-a": "仅修改文件的访问时间",
   "-c": "文件不存在时不创建文件",
-  "-f": "即使当前文件权限不允许，也尝试强制更新时间",
+  "-f": "兼容性选项：即使当前文件权限不允许也不会强制更新（GNU Coreutils 与 macOS 当前实现为空操作）",
   "-h": "如果文件是符号链接，则修改链接本身的时间，而不是链接所指向文件的时间",
   "-m": "仅修改文件的修改时间",
   "-r": "使用指定文件的访问时间和修改时间，而不是当前时间",
@@ -63,7 +65,7 @@ const TOUCH_ZH_TW = {
   "-A": "按指定值調整檔案的訪問時間和修改時間",
   "-a": "僅修改檔案的訪問時間",
   "-c": "檔案不存在時不建立檔案",
-  "-f": "即使當前檔案許可權不允許，也嘗試強制更新時間",
+  "-f": "相容性選項：即使當前檔案許可權不允許也不會強制更新（GNU Coreutils 與 macOS 當前實現為空操作）",
   "-h": "如果檔案是符號連結，則修改連結本身的時間，而不是連結所指向檔案的時間",
   "-m": "僅修改檔案的修改時間",
   "-r": "使用指定檔案的訪問時間和修改時間，而不是當前時間",

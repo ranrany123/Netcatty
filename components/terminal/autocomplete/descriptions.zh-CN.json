@@ -340,7 +340,7 @@
   "Attempt three-way merge if a patch does not apply": "若补丁无法应用，则尝试三方合并",
   "Attempt to compile using the specified compiler, which should be the name of the compiler's executable": "尝试使用指定的编译器编译，该编译器应为编译器可执行文件的名称",
   "Attempt to fix broken packages": "尝试修复损坏的软件包",
-  "Attempt to force the update, even if the file permissions do not currently permit it": "即使当前文件权限不允许，也尝试强制更新时间",
+  "Attempt to force the update, even if the file permissions do not currently permit it": "兼容性选项：即使当前文件权限不允许也不会强制更新（GNU Coreutils 与 macOS 当前实现为空操作）",
   "Attempt to remove directories as well as other types of files": "尝试同时删除目录以及其他类型的文件",
   "Attempt to use AUTH SSL/TLS and encrypted data transfers when connecting via regular FTP protocol. This might be needed if the FTP server requires it for security reasons or you wish to connect securely whenever remote FTP server supports it. Default is false since it might trigger certificate verification errors on misconfigured servers": "通过常规 FTP 协议连接时，尝试使用 AUTH SSL/TLS 和加密数据传输。若 FTP 服务器出于安全原因要求如此，或你希望在远程 FTP 服务器支持时始终安全连接，则可能需要此项。默认为 false，因为它可能在配置错误的服务器上触发证书验证错误",
   "Audible. Include a bell (ASCII 0x07) character in the output when any packet is received. This option is ignored if other format options are present": "可听。收到任何数据包时在输出中包含响铃字符（ASCII 0x07）。若存在其他格式选项，则忽略此选项",

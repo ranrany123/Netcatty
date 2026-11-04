@@ -12,7 +12,9 @@ runtime network or AI request.
 | `@withfig/autocomplete` | `2.692.3`, npm `gitHead` `aef52acff84c45edde61ae610cc2c964802b9a38`; `src/touch.ts` and compiled `build/touch.js` | English description keys and option structure |
 | `jaywcjlove/linux-command` | `command/touch.md` at `db88f1b96abf561fb43e6960c2e6b4367f83fdce` (2024-12-26) | Simplified-Chinese terminology and GNU behavior |
 | GNU Coreutils manual | 9.12, `touch invocation` (`https://www.gnu.org/software/coreutils/manual/html_node/touch-invocation.html`) | GNU/Linux option semantics |
-| macOS `touch(1)` | macOS 26.7 man page (June 1, 2018) | BSD/macOS option semantics |
+| macOS `touch(1)` | macOS 26.7 man page (June 1, 2018) | BSD/macOS manual wording |
+| Apple `file_cmds` | `main` checked 2026-11-04; latest `touch/touch.c` change `a1a0d101147af8494c96a855506fc0fd38469092` (tag `file_cmds-400`) | Current macOS `-f` implementation |
+| FreeBSD `freebsd-src` | commit `b8d55a86995b5a8db5d1651c8dc9fc5093b67d2c` (2026-02-04), `usr.bin/touch/touch.c` | Confirms the BSD-family `-f` no-op |
 
 Checked on 2026-11-04. All English keys below occur only in the `touch` spec
 across the bundled `@withfig/autocomplete@2.692.3` specs and local
@@ -26,7 +28,7 @@ across the bundled `@withfig/autocomplete@2.692.3` specs and local
 | `-A` | Adjust the access and modification time stamps for the file by the specified value | 按指定值调整文件的访问时间和修改时间 |
 | `-a` | Change the access time of the file | 仅修改文件的访问时间 |
 | `-c` | Do not create the file if it does not exist | 文件不存在时不创建文件 |
-| `-f` | Attempt to force the update, even if the file permissions do not currently permit it | 即使当前文件权限不允许，也尝试强制更新时间 |
+| `-f` | Attempt to force the update, even if the file permissions do not currently permit it | 兼容性选项：即使当前文件权限不允许也不会强制更新（GNU Coreutils 与 macOS 当前实现为空操作） |
 | `-h` | If the file is a symbolic link, change the times of the link itself rather than the file that the link points to | 如果文件是符号链接，则修改链接本身的时间，而不是链接所指向文件的时间 |
 | `-m` | Change the modification time of the file | 仅修改文件的修改时间 |
 | `-r` | Use the access and modifications times from the specified file instead of the current time of day | 使用指定文件的访问时间和修改时间，而不是当前时间 |
@@ -43,9 +45,14 @@ edited by hand. The committed zh-TW file reproduces the generator output.
 - `-A` is a BSD/macOS option. GNU Coreutils has no `-A`; the Fig spec and the
   translation follow the BSD/macOS form. On macOS, `-A` also implies `-c`, so
   missing files are silently ignored. No platform detection was added.
-- `-f` forces the update on BSD/macOS. GNU `touch` ignores `-f` for compatibility
-  with BSD versions. The description follows the Fig/BSD wording; GNU users see
-  an option that is accepted but has no effect. No platform detection was added.
+- `-f` is a compatibility no-op in current implementations. The Fig description
+  repeats the historical BSD/macOS man-page wording ("force the update"), but
+  Apple's `file_cmds/touch/touch.c` currently handles `case 'f': /* No-op for
+  compatibility. */`, and FreeBSD's current `usr.bin/touch/touch.c` does the
+  same. GNU Coreutils 9.12 also ignores `-f`. The zh-CN text therefore says the
+  option does not force an update and notes the no-op behavior. The macOS man
+  page still describes the historical behavior, so the implementation source is
+  the authoritative reference here. No platform detection was added.
 - `-h` works on both. macOS makes `-h` imply `-c`; GNU does not create empty files
   with `-h`, but still needs `-c` to suppress warnings about missing files. The
   translation only describes changing the link's own timestamps.
