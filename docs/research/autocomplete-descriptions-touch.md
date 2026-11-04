@@ -69,9 +69,11 @@ edited by hand. The committed zh-TW file reproduces the generator output.
 
 At the touch checkpoint, every covered command with a spec had 0 missing
 descriptions. `ip`, `netstat`, and `ss` have no bundled Fig spec in `2.692.3`.
-The next batch completed `zip`, `unzip`, `make`, and `nano`; current remaining
-counts and sources are tracked in
-`docs/research/autocomplete-descriptions-batch-1.md`.
+The next batches completed `zip`, `unzip`, `make`, `nano`, and the remaining
+preloaded common commands; current remaining counts, sources, and the one
+deferred `node` key are tracked in
+`docs/research/autocomplete-descriptions-batch-1.md` and
+`docs/research/autocomplete-descriptions-batch-2.md`.
 
 ## License notices
 
