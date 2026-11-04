@@ -65,34 +65,13 @@ edited by hand. The committed zh-TW file reproduces the generator output.
 - `touch` creates an empty file when the operand does not exist unless `-c` or
   `-h` applies; the descriptions above do not change that behavior.
 
-## Other commands still missing
+## Later batches
 
-The existing overlay scope in `scripts/list-untranslated-autocomplete-descriptions.mjs`
-is complete after `touch`: every covered command with a spec has 0 missing
-descriptions. `ip`, `netstat`, and `ss` are listed there but have no bundled Fig
-spec in `2.692.3`.
-
-Preloaded common commands that are not in the overlay yet, with missing/total
-description strings:
-
-| Command | Missing | Total |
-| --- | ---: | ---: |
-| `zip` | 4 | 4 |
-| `unzip` | 3 | 3 |
-| `make` | 24 | 24 |
-| `python` / `python3` | 23 / 23 | 23 / 23 |
-| `node` | 13 | 13 |
-| `vim` | 39 | 40 |
-| `nano` | 1 | 1 |
-| `sort` | 37 | 37 |
-| `awk` | 23 | 24 |
-| `sed` | 42 | 42 |
-
-Across the 770 app-visible specs (excluding the filtered `aws`/`gcloud`/`az`
-trees), 709 specs still contain at least one missing description: 47,173
-occurrences, 38,485 unique English strings. The table above is the practical
-next batch. The maintenance script intentionally scans only `COVERED_COMMANDS`;
-expand that list one command at a time when starting a new round.
+At the touch checkpoint, every covered command with a spec had 0 missing
+descriptions. `ip`, `netstat`, and `ss` have no bundled Fig spec in `2.692.3`.
+The next batch completed `zip`, `unzip`, `make`, and `nano`; current remaining
+counts and sources are tracked in
+`docs/research/autocomplete-descriptions-batch-1.md`.
 
 ## License notices
 
