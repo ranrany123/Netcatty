@@ -44,20 +44,55 @@ const TOUCH = {
   modify: "Change the modification time of the file",
   reference: "Use the access and modifications times from the specified file instead of the current time of day",
   timestamp: "Change the access and modification times to the specified time instead of the current time of day",
+  adjustFormat: "[-][[hh]mm]SS",
+  timestampFormat: "[[CC]YY]MMDDhhmm[.SS]",
+} as const;
+
+const TOUCH_ZH_CN = {
+  "-A": "按指定值调整文件的访问时间和修改时间",
+  "-a": "仅修改文件的访问时间",
+  "-c": "文件不存在时不创建文件",
+  "-f": "即使当前文件权限不允许，也尝试强制更新时间",
+  "-h": "如果文件是符号链接，则修改链接本身的时间，而不是链接所指向文件的时间",
+  "-m": "仅修改文件的修改时间",
+  "-r": "使用指定文件的访问时间和修改时间，而不是当前时间",
+  "-t": "将访问时间和修改时间设为指定时间，而不是当前时间",
+} as const;
+
+const TOUCH_ZH_TW = {
+  "-A": "按指定值調整檔案的訪問時間和修改時間",
+  "-a": "僅修改檔案的訪問時間",
+  "-c": "檔案不存在時不建立檔案",
+  "-f": "即使當前檔案許可權不允許，也嘗試強制更新時間",
+  "-h": "如果檔案是符號連結，則修改連結本身的時間，而不是連結所指向檔案的時間",
+  "-m": "僅修改檔案的修改時間",
+  "-r": "使用指定檔案的訪問時間和修改時間，而不是當前時間",
+  "-t": "將訪問時間和修改時間設為指定時間，而不是當前時間",
+} as const;
+
+const TOUCH_EN = {
+  "-A": TOUCH.adjust,
+  "-a": TOUCH.access,
+  "-c": TOUCH.noCreate,
+  "-f": TOUCH.force,
+  "-h": TOUCH.link,
+  "-m": TOUCH.modify,
+  "-r": TOUCH.reference,
+  "-t": TOUCH.timestamp,
 } as const;
 
 const touchSpec: FigSpec = {
   name: "touch",
   description: TOUCH.command,
   options: [
-    { name: "-A", description: TOUCH.adjust },
+    { name: "-A", description: TOUCH.adjust, args: { name: "time", description: TOUCH.adjustFormat } },
     { name: "-a", description: TOUCH.access },
     { name: "-c", description: TOUCH.noCreate },
     { name: "-f", description: TOUCH.force },
     { name: "-h", description: TOUCH.link },
     { name: "-m", description: TOUCH.modify },
-    { name: "-r", description: TOUCH.reference },
-    { name: "-t", description: TOUCH.timestamp },
+    { name: "-r", description: TOUCH.reference, args: { name: "file" } },
+    { name: "-t", description: TOUCH.timestamp, args: { name: "timestamp", description: TOUCH.timestampFormat } },
   ],
 };
 
@@ -154,22 +189,51 @@ test("locales other than zh-CN and zh-TW keep English descriptions", async () =>
   assert.equal(dockerSpec.subcommands?.[0].options?.[0].description, SINCE);
 });
 
-test("zh-CN translates touch options without changing the command", async () => {
+test("zh-CN translates touch options without changing names or insertion text", async () => {
   const suggestions = await getCompletions("touch -", {
     locale: "zh-CN",
     skipPathCompletion: true,
     maxResults: 20,
   });
 
-  assert.equal(suggestionNamed(suggestions, "-A")?.description, "按指定值调整文件的访问时间和修改时间");
-  assert.equal(suggestionNamed(suggestions, "-a")?.description, "仅修改文件的访问时间");
-  assert.equal(suggestionNamed(suggestions, "-c")?.description, "文件不存在时不创建文件");
-  assert.equal(suggestionNamed(suggestions, "-f")?.description, "即使当前文件权限不允许，也尝试强制更新时间");
-  assert.equal(suggestionNamed(suggestions, "-h")?.description, "如果文件是符号链接，则修改链接本身的时间，而不是链接所指向文件的时间");
-  assert.equal(suggestionNamed(suggestions, "-m")?.description, "仅修改文件的修改时间");
-  assert.equal(suggestionNamed(suggestions, "-r")?.description, "使用指定文件的访问时间和修改时间，而不是当前时间");
-  assert.equal(suggestionNamed(suggestions, "-t")?.description, "将访问时间和修改时间设为指定时间，而不是当前时间");
+  for (const [name, description] of Object.entries(TOUCH_ZH_CN)) {
+    const suggestion = suggestionNamed(suggestions, name);
+    assert.equal(suggestion?.text, `touch ${name}`);
+    assert.equal(suggestion?.displayText, name);
+    assert.equal(suggestion?.description, description);
+  }
+  assert.equal(touchSpec.description, TOUCH.command);
+  assert.deepEqual(touchSpec.options?.map((option) => option.name), Object.keys(TOUCH_ZH_CN));
   assert.equal(touchSpec.options?.[0].description, TOUCH.adjust);
+});
+
+test("zh-TW touch descriptions use generated Taiwan phrases", async () => {
+  const suggestions = await getCompletions("touch -", {
+    locale: "zh-TW",
+    skipPathCompletion: true,
+    maxResults: 20,
+  });
+
+  for (const [name, description] of Object.entries(TOUCH_ZH_TW)) {
+    assert.equal(suggestionNamed(suggestions, name)?.description, description);
+  }
+});
+
+test("touch keeps English descriptions outside zh-CN and zh-TW", async () => {
+  for (const locale of ["en", "ru", undefined]) {
+    const suggestions = await getCompletions("touch -", {
+      locale,
+      skipPathCompletion: true,
+      maxResults: 20,
+    });
+
+    for (const [name, description] of Object.entries(TOUCH_EN)) {
+      const suggestion = suggestionNamed(suggestions, name);
+      assert.equal(suggestion?.text, `touch ${name}`);
+      assert.equal(suggestion?.description, description);
+    }
+  }
+  assert.equal(touchSpec.description, TOUCH.command);
 });
 
 test("zh-CN and zh-TW overlays do not leak across later lookups", async () => {
@@ -208,6 +272,10 @@ test("committed zh-TW dictionary keeps zh-CN keys and Taiwan terminology", () =>
   assert.equal(traditional[FILE_REMOVED], FILE_REMOVED_TW);
   assert.equal(traditional[SINCE], SINCE_TW);
   assert.equal(traditional[COMPRESSION_PROGRAM], "不根據歸檔字尾判斷壓縮程式");
+  assert.equal(simplified[TOUCH.adjustFormat], "[-][[hh]mm]SS（时间格式）");
+  assert.equal(traditional[TOUCH.adjustFormat], "[-][[hh]mm]SS（時間格式）");
+  assert.equal(simplified[TOUCH.timestampFormat], "[[CC]YY]MMDDhhmm[.SS]（时间格式）");
+  assert.equal(traditional[TOUCH.timestampFormat], "[[CC]YY]MMDDhhmm[.SS]（時間格式）");
 
   let processCount = 0;
   let tripCount = 0;
