@@ -358,7 +358,7 @@
   "Attempt three-way merge if a patch does not apply": "若補丁無法應用，則嘗試三方合併",
   "Attempt to compile using the specified compiler, which should be the name of the compiler's executable": "嘗試使用指定的編譯器編譯，該編譯器應為編譯器執行檔的名稱",
   "Attempt to fix broken packages": "嘗試修復損壞的軟體包",
-  "Attempt to force the update, even if the file permissions do not currently permit it": "相容性選項，在 GNU Coreutils 和當前 macOS 中被忽略",
+  "Attempt to force the update, even if the file permissions do not currently permit it": "即使當前檔案許可權不允許，也嘗試強制更新時間",
   "Attempt to remove directories as well as other types of files": "嘗試同時刪除目錄以及其他型別的檔案",
   "Attempt to use AUTH SSL/TLS and encrypted data transfers when connecting via regular FTP protocol. This might be needed if the FTP server requires it for security reasons or you wish to connect securely whenever remote FTP server supports it. Default is false since it might trigger certificate verification errors on misconfigured servers": "通過常規 FTP 協議連線時，嘗試使用 AUTH SSL/TLS 和加密資料傳輸。若 FTP 伺服器出於安全原因要求如此，或你希望在遠端 FTP 伺服器支援時始終安全連線，則可能需要此項。預設為 false，因為它可能在配置錯誤的伺服器上觸發證書驗證錯誤",
   "Audible. Include a bell (ASCII 0x07) character in the output when any packet is received. This option is ignored if other format options are present": "可聽。收到任何資料包時在輸出中包含響鈴字元（ASCII 0x07）。若存在其他格式選項，則忽略此選項",

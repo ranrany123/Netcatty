@@ -147,6 +147,9 @@ function createPreloadApi(ctx) {
   },
   getPluginPermissions: (pluginId) => ipcRenderer.invoke("netcatty:plugins:permissions", { pluginId }),
   revokePluginPermissions: (pluginId) => ipcRenderer.invoke("netcatty:plugins:revoke-permissions", { pluginId }),
+  prepareGitHubPlugin: (repository) => ipcRenderer.invoke("netcatty:plugins:github-prepare", { repository }),
+  installGitHubPlugin: (token) => ipcRenderer.invoke("netcatty:plugins:github-install", { token }),
+  discardGitHubPlugin: (token) => ipcRenderer.invoke("netcatty:plugins:github-discard", { token }),
   installPluginPackage: (archivePath, options) => ipcRenderer.invoke("netcatty:plugins:install", {
     archivePath,
     enable: options?.enable === true,
@@ -169,6 +172,13 @@ function createPreloadApi(ctx) {
     const listener = () => callback();
     ipcRenderer.on("netcatty:plugins:themes-changed", listener);
     return () => ipcRenderer.removeListener("netcatty:plugins:themes-changed", listener);
+  },
+  onSystemThemeChanged: (callback) => {
+    const listener = (_event, payload) => {
+      if (typeof payload?.isDark === "boolean") callback({ isDark: payload.isDark });
+    };
+    ipcRenderer.on("netcatty:system-theme-changed", listener);
+    return () => ipcRenderer.removeListener("netcatty:system-theme-changed", listener);
   },
   getPluginContributions: (options) => ipcRenderer.invoke("netcatty:plugins:contributions", options ?? {}),
   getPluginBrandIcon: (pluginId) => ipcRenderer.invoke("netcatty:plugins:brand-icon", { pluginId }),
@@ -938,10 +948,10 @@ function createPreloadApi(ctx) {
     const result = await ipcRenderer.invoke("netcatty:sftp:openForSession", {
       ...(options || {}),
       sessionId,
-      expectedEndpoint: options,
+      expectedEndpoint: options?.reuseExactSessionOnly === true ? undefined : options,
     });
     if (
-      options?.requireExactSourceSession === true
+      (options?.requireExactSourceSession === true || options?.reuseExactSessionOnly === true)
       && result.sourceSessionId !== sessionId
     ) {
       if (result.sftpId) {
@@ -1002,6 +1012,9 @@ function createPreloadApi(ctx) {
   },
   extractSftpArchive: async (sftpId, path, encoding) => {
     return ipcRenderer.invoke("netcatty:sftp:extract", { sftpId, path, encoding });
+  },
+  createSftpArchive: async (sftpId, options, encoding) => {
+    return ipcRenderer.invoke("netcatty:sftp:createArchive", { sftpId, options, encoding });
   },
   getSftpHomeDir: async (sftpId, encoding) => {
     return ipcRenderer.invoke("netcatty:sftp:homeDir", { sftpId, encoding });
